@@ -1,17 +1,14 @@
-#import "template.typ": *
+#import "insa-template/template.typ": *
 
-// Take a look at the file `template.typ` in the file panel
-// to customize this template and discover how it works.
-#show: project.with(
-  title: "Réseau tp1",
-  authors: (
-    "Paul Gasnier et Léo Breidenstein",
+#show: compte-rendu.with(
+  titre: "Réseau",
+  auteurs: (
+    "Paul Gasnier",
+    "Léo Breidenstein"
   ),
+  numéro: 1,
+  date: "15/02/2024"
 )
-
-// We generated the example code below so you can see how
-// your document will look. Go ahead and replace it with
-// your own content!
 
 = Environnement IP et Ethernet
 
@@ -117,6 +114,53 @@ Le segment est vide car ce paquet est le premier d'un handshake.
 
 == Question 23
 Le numéro de séquence est 142776364.
-La taille de la fenêtre est 32120.
+
+La taille de la fenêtre est 32120 octets.\
+Cela veut dire que le client peut recevoir 32120 octets de données avant que le serveur ne doive attendre un acquittement.
 
 == Question 24
+
+==== Premier paquet (SYN), headers Ethernet
+Source: `00:09:0f:09:00:1a`\
+Destination: `f0:77:c3:d5:45:8f`\
+Type: `IPv4`
+
+==== Deuxième paquet (SYN-ACK), headers IP
+Source Address: `34.223.124.45`\
+Destination Address: `10.9.25.85`\
+Protocol: `TCP (6)`
+
+==== Deuxième paquet (SYN-ACK), headers TCP
+Acknowledgment number (raw): `142776365`\
+Acknowledgment number (relative): `1`
+
+TCP Segment Len: `0`
+
+Sequence Number (raw): `2344971599`\
+Sequence number (relative): `1`
+
+La taille de la fenêtre est 26847 octets.
+
+== Question 25
+La MSS (Maximum Segment Size) est de 1460 octets.
+
+== Question 26
+
+==== Troisième paquet (ACK), headers TCP
+Acknowledgment number (raw): `2344971600`\
+Acknowledgment number (relative): `1`
+
+Sequence Number (raw): `142776365`\
+Sequence number (relative): `1`
+
+La taille de la fenêtre est 32128 octets.
+
+== Question 27
+Les numéros de séquence et d'acquittement sont incrémentés de la taille des données envoyées.
+
+== Question 28
+Le header HTTP signale 2238 octets de données.
+
+== Question 29
+On peut penser que le paquet va être fragmenté à la couche IP car la taille des données est supérieure à la MTU.
+Selon Wireshark, la fragmentation des données s'effectue à la couche TCP: on observe deux paquets TCP rassemblés en un paquet HTTP.
