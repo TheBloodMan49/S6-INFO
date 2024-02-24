@@ -1,0 +1,13 @@
+Dataset used: [Medical Appointment No Shows](https://www.kaggle.com/datasets/joniarroba/noshowappointments)
+
+# Objectives
+- Choose a classification problem
+- Import the data (pandas)
+- Run an experimental protocol
+  * Split the data into training and testing
+  * Preprocess the data
+    - View the data (TSNE)
+    - Normalize the data (MinMaxScaler)
+    - Categorial data -> numerical data (OneHotEncoder)
+  * Instanciate a classifier
+  * Train and evaluate the classifier
