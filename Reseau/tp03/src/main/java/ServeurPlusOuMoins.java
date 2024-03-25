@@ -16,13 +16,13 @@ public class ServeurPlusOuMoins {
                 BufferedReader in = new BufferedReader(new InputStreamReader(s.getInputStream()));
                 PrintWriter out = new PrintWriter(s.getOutputStream(), true);
 
-                int nombreAleatoire = (int) (Math.random() * 100);
+                int randNb = (int) Math.ceil((Math.random() * 100));
                 while (true) {
                     try {
                         int guess = Integer.parseInt(in.readLine());
-                        if (guess < nombreAleatoire) {
+                        if (guess < randNb) {
                             out.println("1");
-                        } else if (guess > nombreAleatoire) {
+                        } else if (guess > randNb) {
                             out.println("-1");
                         } else {
                             out.println("0");
