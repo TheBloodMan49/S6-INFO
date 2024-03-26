@@ -73,25 +73,36 @@ int main(int argc, char** argv) {
   serveur.sin_family = AF_INET;
   serveur.sin_port = htons(sport);
 #ifdef WIN32
-    serveur.sin_addr.s_addr =inet_addr(argv[2]);
+  serveur.sin_addr.s_addr =inet_addr(argv[2]);
 #else
   inet_aton(argv[2], (struct in_addr *)&serveur.sin_addr);
 #endif
 
-  while (nb_question < NB_REQUETES) {
+  int quit = 0;
 
-    sprintf(buf_write, "#%2s=%03d",id,nb_question++);
-    printf("client %2s: (%s,%4d) envoie a ", id
-        , inet_ntoa(moi.sin_addr),ntohs(moi.sin_port));
-    printf("(%s,%4d): %s\n", inet_ntoa(serveur.sin_addr)
-        , ntohs(serveur.sin_port), buf_write);
-    ret = sendto(sock, buf_write, strlen(buf_write),0
-        , (struct sockaddr *) &serveur,sizeof(serveur));
-    if (ret <= 0) {
-      printf("%s: erreur dans sendto (num=%d, mess=%s)\n", argv[0]
-          ,ret,strerror(errno));
+  sprintf(buf_write, "\n");
+  sendto(sock, buf_write, strlen(buf_write), 0, (struct sockaddr *)&serveur, sizeof(serveur));
+
+  while (!quit) {
+
+    ret = recvfrom(sock, buf_read, 256, 0, (struct sockaddr *)&serveur, &serveur_len);
+    if (ret < 0) {
+      printf("recvfrom=%d: %s\n", ret, strerror(errno));
       continue;
     }
+    printf("Server: %s", buf_read);
+
+    printf("Your try: ");
+    scanf("%49s", buf_write);
+    int len = strlen(buf_write);
+    buf_write[len] = '\n';
+    buf_write[len+1] = '\0';
+    ret = sendto(sock, buf_write, strlen(buf_write), 0, (struct sockaddr *)&serveur, sizeof(serveur));
+    if (ret <= 0) {
+      printf("sendto=%d: %s\n", ret, strerror(errno));
+      continue;
+    }
+
   }
 
   close(sock);
