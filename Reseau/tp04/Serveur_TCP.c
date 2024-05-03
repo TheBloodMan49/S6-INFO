@@ -91,7 +91,7 @@ int main(int argc, char** argv) {
       }
       printf("srv %s recu de (%s,%4d):%s\n", id, inet_ntoa(client.sin_addr), ntohs(client.sin_port),buf_read);;
       sprintf(buf_write,"#%2s=%03d#", id,nb_reponse++);
-      ret = send(sock_pipe, buf_write, strlen(buf_write)+1, 0);
+      ret = send(sock_pipe, buf_write, strlen(buf_write), 0);
       if (ret <= 0) {
         printf("%s: write=%d: %s\n", argv[0], ret, strerror(errno));
         break;
