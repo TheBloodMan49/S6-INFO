@@ -1,0 +1,26 @@
+<!ELEMENT resumeDeStage (informationsGenerales, informationsSupplementaires)>
+
+<!ELEMENT informationsGenerales (etudiant, entreprise, titre)>
+<!ELEMENT etudiant EMPTY>
+<!ATTLIST etudiant
+          prenom CDATA #REQUIRED
+          nom CDATA #REQUIRED>
+
+<!ELEMENT entreprise (tuteur, adresse)>
+<!ELEMENT tuteur EMPTY>
+<!ATTLIST tuteur
+          prenom CDATA #REQUIRED
+          nom CDATA #REQUIRED>
+<!ELEMENT adresse (nomEntreprise, rue, ville)>
+<!ELEMENT nomEntreprise (#PCDATA | br)*>
+<!ELEMENT br EMPTY>
+<!ELEMENT rue (#PCDATA)>
+<!ELEMENT ville (#PCDATA)>
+<!ELEMENT titre (#PCDATA)>
+
+<!ELEMENT informationsSupplementaires (contexteDuStage, travailRealise, motsCles, apportDuStage)>
+<!ELEMENT contexteDuStage (#PCDATA | br)*>
+<!ELEMENT travailRealise (#PCDATA)>
+<!ELEMENT motsCles (motCle+)>
+<!ELEMENT motCle (#PCDATA)>
+<!ELEMENT apportDuStage (#PCDATA)>

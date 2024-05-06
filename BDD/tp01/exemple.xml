@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE resumeDeStage SYSTEM "exemple.dtd">
+<?xml-stylesheet href="style.css"?>
+<resumeDeStage>
+  <informationsGenerales>
+    <etudiant prenom="Pierre" nom="Durand"></etudiant>
+
+    <entreprise>
+      <tuteur prenom="Alain" nom="Nicolas"></tuteur>
+      <adresse>
+        <nomEntreprise>
+          Société de Service et Conseil
+          <br/>
+          Département « Conseil et techniques avancées »
+        </nomEntreprise>
+        <rue>4 rue des Tilleuls</rue>
+        <ville>35065 Rennes cedex</ville>
+      </adresse>
+    </entreprise>
+
+    <titre>Intégration d'un composant dans un Système d'Information : définition, conception, prototypage, et évaluation.</titre>
+  </informationsGenerales>
+
+  <informationsSupplementaires>
+    <contexteDuStage>
+      1) Un Système d'Information peut être défini comme un ensemble de composants destiné à faciliter la gestion de l'ensemble des informations.
+      <br/>
+      2) Au sein d'un tel système d'information il serait intéressant de proposer l'intégration…
+    </contexteDuStage>
+    <travailRealise>
+      Après avoir étudié la documentation, j'ai défini le cahier des charges…
+    </travailRealise>
+    <motsCles>
+      <motCle>Linux</motCle>
+      <motCle>SQL</motCle>
+      <motCle>XML</motCle>
+      <motCle>C++</motCle>
+    </motsCles>
+    <apportDuStage>
+      J'ai beaucoup appris….
+    </apportDuStage>
+  </informationsSupplementaires>
+</resumeDeStage>
