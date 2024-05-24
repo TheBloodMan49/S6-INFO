@@ -1,0 +1,196 @@
+// 1)
+CREATE (:Lieu {name:'Triangle'})
+
+// 2)
+CREATE (:Lieu {name:'Beaulieu'})
+CREATE (:Lieu {name:'Poterie'})
+
+// 3)
+MATCH (x:Lieu {name: 'Poterie'}) RETURN x
+// OR : MATCH (x:Lieu) WHERE x.name = 'Poterie' RETURN x
+
+// 4)
+MATCH (x:Lieu) WHERE x.name = 'Triangle' SET x.rive = 'Guche'
+MATCH (x:Lieu) WHERE x.name = 'Triangle' RETURN x
+
+// 5)
+MATCH (x:Lieu) WHERE x.name = 'Triangle' SET x.rive = 'Gauche'
+
+// 6)
+MATCH (x:Lieu) RETURN x
+
+// 7)
+MATCH (x:Lieu) WHERE x.name = 'Poterie' SET x.rive = 'Gauche'
+
+MATCH (x:Lieu) WHERE x.name = 'Beaulieu' SET x.rive = 'Droite'
+
+MATCH (x:Lieu) RETURN x
+
+// 8)
+CREATE (:Lieu {name:'Poterie'})
+
+MATCH (x:Lieu) WHERE x.name = 'Poterie' DELETE x
+
+CREATE (:Lieu {name:'Poterie', rive:'Gauche'})
+
+// 9)
+CREATE (:Lieu {name:'Toto', copie: 1})
+
+CREATE (:Lieu {name:'Toto', copie: 2})
+
+MATCH (x:Lieu) RETURN x
+
+MATCH (n) WHERE id(n) = 8 DELETE n
+
+MATCH (x:Lieu {name:'Toto'}) DELETE x
+
+// 10)
+MATCH (depart:Lieu {name:'Poterie'}), (arrivee:Lieu{name:'Triangle'})
+
+CREATE (depart)-[:ENERGIE {calories: 725}]->(arrivee)
+
+// 11)
+MATCH (depart:Lieu {name:'Poterie'}), (arrivee:Lieu{name:'Beaulieu'})
+
+CREATE (depart)-[:ENERGIE {calories: 3114}]->(arrivee)
+
+// 12)
+START source=node(*)
+MATCH (source)-[arrete]->(cible)
+RETURN source AS Sommet_Source, type(arrete) AS Nom_Arrete, arrete as
+Valeur_Arrete, cible AS Sommet_Cible
+
+// 13)
+MATCH (x:Lieu) WHERE x.name CONTAINS 'a' RETURN x
+
+// 14)
+MATCH (n) OPTIONAL MATCH (n)-[r]-() DELETE n, r
+
+CREATE
+(tgl:Lieu {name:'Triangle', rive: 'Gauche'}),
+(bol:Lieu {name:'Beaulieu', rive: 'Droite'}),
+(ptr:Lieu {name:'Poterie', rive: 'Gauche'})
+SET
+tgl.coord = point({longitude: -1.660, latitude: 48.086}),
+bol.coord = point({longitude: -1.639, latitude: 48.122}),
+ptr.coord = point({longitude: -1.644, latitude: 48.087})
+CREATE
+(tgl)-[:ENERGIE {calories: 725}]->(ptr),
+(bol)-[:ENERGIE {calories: 3114}]->(ptr)
+
+// 15)
+MATCH (dep:Lieu {name: 'Beaulieu'}), (arr:Lieu{name: 'Poterie'})
+RETURN toInteger(distance(dep.coord, arr.coord))
+
+// 16)
+CREATE (:Lieu {name:"Saint_Anne", rive:"Droite", coord: point({longitude:-1.680, latitude:48.114})})
+CREATE (:Lieu {name:"Villejean", rive:"Droite", coord: point({longitude: -1.703, latitude: 48.121})})
+CREATE (:Lieu {name:"Cimetière_Est", rive:"Gauche", coord: point({longitude: -1.648, latitude: 48.104})})
+CREATE (:Lieu {name:"Gare", rive:"Gauche", coord: point({longitude: -1.671, latitude: 48.103})})
+CREATE (:Lieu {name:"Le_Mail", rive:"Droite", coord: point({longitude: -1.692, latitude: 48.108})})
+CREATE (:Lieu {name:"Charles_De_Gaulle", rive:"Gauche", coord: point({longitude: -1.676, latitude: 48.105})})
+
+MATCH (x:Lieu {name: "Triangle"}), (y:Lieu {name:"Gare"}) CREATE (x)-[:ENERGIE {calories: 1129}]->(y)
+MATCH (x:Lieu {name: "Triangle"}), (y:Lieu {name:"Charles_De_Gaulle"}) CREATE (x)-[:ENERGIE {calories: 1475}]->(y)
+MATCH (x:Lieu {name: "Beaulieu"}), (y:Lieu {name:"Saint_Anne"}) CREATE (x)-[:ENERGIE {calories: 616}]->(y)
+MATCH (x:Lieu {name: "Beaulieu"}), (y:Lieu {name:"Gare"}) CREATE (x)-[:ENERGIE {calories: 126}]->(y)
+MATCH (x:Lieu {name: "Saint_Anne"}), (y:Lieu {name:"Villejean"}) CREATE (x)-[:ENERGIE {calories: 564}]->(y)
+MATCH (x:Lieu {name: "Saint_Anne"}), (y:Lieu {name:"Le_Mail"}) CREATE (x)-[:ENERGIE {calories: 603}]->(y)
+MATCH (x:Lieu {name: "Saint_Anne"}), (y:Lieu {name:"Charles_De_Gaulle"}) CREATE (x)-[:ENERGIE {calories: 576}]->(y)
+MATCH (x:Lieu {name: "Cimetière_Est"}), (y:Lieu {name:"Gare"}) CREATE (x)-[:ENERGIE {calories: 416}]->(y)
+MATCH (x:Lieu {name: "Gare"}), (y:Lieu {name:"Charles_De_Gaulle"}) CREATE (x)-[:ENERGIE {calories: 371}]->(y)
+MATCH (x:Lieu {name: "Le_Mail"}), (y:Lieu {name:"Charles_De_Gaulle"}) CREATE (x)-[:ENERGIE {calories: 65}]->(y)
+
+// 17)
+MATCH (x:Lieu {rive:'Gauche'}) RETURN x
+
+// 18)
+MATCH (:Lieu {name: 'Saint_Anne'})-->(x) RETURN x.name, count(x)
+
+// 19)
+MATCH (x)-->(:Lieu {name:'Saint_Anne'}) RETURN x.name, count(x)
+
+// 20)
+MATCH (x)<-->(:Lieu {name:'Saint_Anne'}) RETURN x.name, count(x)
+
+// 21)
+MATCH (depuis:Lieu), (vers:Lieu)
+RETURN depuis.name as Depuis, vers.name as Vers,
+toInteger(distance(depuis.coord, vers.coord)) as DistMètres ORDER by
+DistMètres DESC LIMIT 1
+
+// 22)
+MATCH p = shortestPath((depart)-[:ENERGIE*]-(arrivee))
+WHERE depart.name = 'Villejean' AND arrivee.name = 'Poterie'
+RETURN [n in nodes(p) | n.name] AS Trajet
+
+// 23)
+MATCH (dep:Lieu {name:'Villejean'})-[arrete]-(arr:Lieu{name:'Saint_Anne'})
+RETURN toInteger(distance(dep.coord, arr.coord)) as distance,
+arrete.calories as Cal
+
+// 24)
+MATCH (depart:Lieu {name:'Villejean'})
+MATCH (arrivee:Lieu {name:'Poterie'})
+MATCH p = shortestPath((depart)-[:ENERGIE*]-(arrivee))
+RETURN [n in nodes(p) | n.name] AS Trajet,
+REDUCE(acc = 0, r in relationships(p) | acc + r.calories) AS depense,
+REDUCE(d=0.0, x IN range(1, size(nodes(p))-1) | d + toInteger
+(distance(nodes(p)[x-1].coord, nodes(p)[x].coord))) as totalDistance
+
+// 25)
+MATCH (from: Lieu {name:"Villejean"}), (to: Lieu {name:"Poterie"}),
+path = ((from)-[:ENERGIE*]-(to))
+WITH
+REDUCE(tot_cal = 0, rel in relationships(path) | tot_cal + rel.calories) AS
+cout_calories, path
+RETURN [n in nodes(path) | n.name] AS Trajet,
+cout_calories as Dépense ORDER BY cout_calories
+LIMIT 1
+
+// 26)
+MATCH p = shortestPath((depart)-[:ENERGIE*]-(arrivee))
+WHERE all(link in relationships(p) WHERE link.calories < 1200) AND
+depart.name = 'Villejean' AND arrivee.name = 'Poterie'
+RETURN [n in nodes(p) | n.name] AS Trajet
+
+// 27)
+MATCH p = shortestPath((depart)-[:ENERGIE*]-(arrivee))
+WHERE all(link in relationships(p) WHERE link.calories < 1500) AND
+depart.name = 'Villejean' AND arrivee.name = 'Poterie'
+RETURN [n in nodes(p) | n.name] AS Trajet
+
+// 28)
+MATCH (v:Lieu {name: "Villejean"}), (g:Lieu {name: "Gare"}), (t:Lieu {name: "Triangle"}), (cdg:Lieu {name: "Charles_De_Gaulle"}), (b:Lieu {name: "Beaulieu"})
+CREATE
+    (jean: Personne {name:'Jean'}),
+    (isabelle: Personne {name:'Isabelle'}),
+    (paul: Personne {name:'Paul'}),
+    (claire: Personne {name:'Claire'}),
+    (pierre: Personne {name:'Pierre'}),
+    (morgane: Personne {name:'Morgane'})
+CREATE
+    (jean)-[:Ami]->(isabelle),
+    (jean)-[:Ami]->(claire),
+    (jean)-[:Ami]->(paul),
+    (paul)-[:Ami]->(morgane),
+    (isabelle)-[:Ami]->(claire),
+    (claire)-[:Ami]->(morgane),
+    (claire)-[:Ami]->(pierre)
+CREATE
+    (jean)-[:Habite]->(v),
+    (isabelle)-[:Habite]->(g),
+    (paul)-[:Habite]->(v),
+    (claire)-[:Habite]->(t),
+    (pierre)-[:Habite]->(cdg),
+    (morgane)-[:Habite]->(b)
+
+// 29)
+MATCH (jean:Personne {name:'Jean'}), (x)-[:Ami]-(jean), (y)-[:Ami]-(jean), (x)-[:Ami]->(y) RETURN x, y
+
+// 30)
+MATCH (:Personne {name:'Jean'})-[:Habite]->(depart:Lieu), 
+(:Personne {name:'Claire'})-[:Habite]->(arrivee:Lieu), 
+p = shortestPath((depart)-[:ENERGIE*]-(arrivee))
+RETURN [n in nodes(p) | n.name] AS Trajet
+

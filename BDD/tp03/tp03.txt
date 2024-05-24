@@ -1,0 +1,122 @@
+1)
+
+CREATE KEYSPACE IF NOT EXISTS user WITH replication = {'class': 'SimpleStrategy', 'replication_factor': 1};
+USE user;
+
+2)
+
+CREATE TYPE artiste (nom text, prenom text, date int);
+
+3)
+
+2
+CREATE TABLE cm (id_cm int,
+titre text,
+real frozen<artiste>,
+acteurs set <frozen<artiste>>,
+PRIMARY KEY (id_cm));
+
+INSERT INTO cm (id_cm, titre, real, acteurs) VALUES
+(1, 'Syndrome', {nom: 'Rouge', prenom: 'Zulma', date: 1990},
+{{nom: 'Suco', prenom: 'Sarah', date:1981},
+{nom: 'Platel', prenom: 'Joffrey', date: 1977},
+{nom: 'Ribert', prenom: 'Carine', date: null}});
+
+INSERT INTO cm (id_cm, titre, real, acteurs) VALUES
+(2,'Maman', {nom: 'Cournelle', prenom: 'Cecile', date: 1995},
+{{nom: 'Herrera', prenom: 'Camille', date: 1993},
+{nom: 'Slama', prenom: 'Audrey', date: -1}});
+
+3)
+
+SELECT * FROM cm;
+EXPAND ON;
+SELECT * FROM cm WHERE id_cm=2;
+SELECT titre FROM cm;
+UPDATE cm SET acteurs = acteurs + {{nom: 'Gaspar', prenom: 'James', date: 2003}} WHERE id_cm=2;
+INSERT INTO cm (id_cm, titre, real, acteurs) VALUES (3, 'titre en attente', null, null) ;
+SELECT * FROM cm;
+
+4)
+
+SELECT * FROM cm where id_cm = 3;
+INSERT INTO cm (id_cm, titre, real, acteurs) VALUES (3, 'on a trouvé un titre', null, null) ;
+# On vient d'écraser des données :(
+DELETE FROM cm WHERE id_cm = 3;
+SELECT * FROM cm;
+
+5)
+
+UPDATE cm SET acteurs = acteurs + {{nom: 'Slama', prenom: 'Audrey', date: -1}} WHERE id_cm = 1;
+SELECT * FROM cm;
+
+6)
+
+SELECT real FROM cm;
+
+7)
+
+SELECT * FROM cm WHERE titre='Syndrome' ALLOW FILTERING;
+
+8)
+
+CREATE TABLE mes_artistes (nom text, prenom text, cm set<int>, PRIMARY KEY (nom, prenom));
+INSERT INTO mes_artistes (nom, prenom, cm) VALUES ('Rouge','Zulma',{1});
+INSERT INTO mes_artistes (nom, prenom, cm) VALUES ('Suco','Sarah',{1});
+INSERT INTO mes_artistes (nom, prenom, cm) VALUES ('Platel','Joffrey',{1});
+INSERT INTO mes_artistes (nom, prenom, cm) VALUES ('Ribert','Carine',{1});
+INSERT INTO mes_artistes (nom, prenom, cm) VALUES ('Cournelle','Cecile',{2});
+INSERT INTO mes_artistes (nom, prenom, cm) VALUES ('Herrera','Camille',{2});
+INSERT INTO mes_artistes (nom, prenom, cm) VALUES ('Slama','Audrey',{1,2});
+
+9)
+
+EXPAND OFF
+SELECT * FROM mes_artistes;
+
+10)
+
+SELECT count(*) FROM mes_artistes;
+
+11)
+
+UPDATE cm SET titre = 'Le syndrome' WHERE id_cm = 1;
+# Vu qu'on utilise les ids dans l'autre table, on n'a rien d'autre à update !
+
+12)
+
+SELECT cm FROM mes_artistes WHERE nom = 'Slama';
+SELECT cm FROM mes_artistes WHERE prenom = 'Joffrey' ALLOW FILTERING;
+# Si la table est partitionnée, ce sera selon le nom car c'est le 1er element de la primary key.
+SELECT cm FROM mes_artistes WHERE nom = 'Gaspar' AND prenom = 'James';
+
+13)
+
+ALTER TABLE mes_artistes ADD genre text;
+
+14)
+
+SELECT * FROM mes_artistes;
+
+UPDATE mes_artistes SET genre = 'f' WHERE nom = 'Suco' AND prenom = 'Sarah';
+UPDATE mes_artistes SET genre = 'f' WHERE nom = 'Slama' AND prenom = 'Audrey';
+UPDATE mes_artistes SET genre = 'm' WHERE nom = 'Platel' AND prenom = 'Joffrey';
+UPDATE mes_artistes SET genre = 'f' WHERE nom = 'Ribert' AND prenom = 'Carine';
+UPDATE mes_artistes SET genre = 'f' WHERE nom = 'Cournelle' AND prenom = 'Cecile';
+UPDATE mes_artistes SET genre = 'f' WHERE nom = 'Rouge' AND prenom = 'Zulma';
+UPDATE mes_artistes SET genre = 'f' WHERE nom = 'Herrera' AND prenom = 'Camille';
+
+SELECT * FROM mes_artistes;
+
+15)
+
+CREATE TABLE avis_id (id_cm int, pseudo text, avis text, PRIMARY KEY (id_cm, pseudo));
+CREATE TABLE avis_pseudo (pseudo text, id_cm int, avis text, PRIMARY KEY (pseudo, id_cm));
+
+16)
+
+SELECT pseudo, avis FROM avis_id WHERE id_cm = 1;
+
+17)
+
+SELECT pseudo, avis FROM avis_pseudo WHERE pseudo = 'p-ABCD' OR pseudo = 'p-QRST';

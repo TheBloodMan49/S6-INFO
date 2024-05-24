@@ -1,0 +1,120 @@
+// 1)
+db.paris.find({"category":"accommodation"})
+
+// 2)
+db.paris.find({"category":"accommodation"}, {name:1});
+
+match = {"category":"accommodation"};
+project = {name:1};
+db.paris.find(match, project).pretty();
+
+// 3)
+match = {"category":"accommodation"};
+project = {_id:0, contact:0};
+db.paris.find(match, project).pretty();
+
+// 4)
+match = {"contact.phone":{$exists:1, $ne:""}};
+project = {"contact.phone":1, name:1};
+db.paris.find(match, project).pretty();
+
+// 5)
+match = {"contact.Foursquare":{$ne:"", $exists:1},
+"contact.website":{$ne:"", $exists:1}};
+project = {"name":1, "contact.Foursquare":1, "contact.website":1};
+db.paris.find(match, project).pretty();
+
+// 6)
+match = {"name":/Hotel/i}; // OR: match = {"name":{$regex:"Hotel", $options:"i"}};
+project = {name:1};
+db.paris.find(match, project).pretty();
+
+// 7)
+match = {"services":"chambres non-fumeurs"};
+project = {"name":1, "services":1}
+db.paris.find(match, project).pretty();
+
+// 8)
+match = {"services.0":"chambres non-fumeurs"};
+project = {"name":1, "services":1}
+db.paris.find(match, project).pretty();
+
+// 9)
+match = {"services": ["chambres non-fumeurs"]}; // OR: match = {"services.0":"chambres non-fumeurs", "services": {$size:1}}; 
+                                                // OR: match = {"services.0":"chambres non-fumeurs", "services.1": {$exists:0}};
+project = {"name":1, "services":1}
+db.paris.find(match, project).pretty();
+
+// 10)
+match = {"services": {$size:5}};
+project = {"name":1, "services":1}
+db.paris.find(match, project).pretty();
+
+// 11)
+match = {"services.4": {$exists:1}}
+project = {"name":1, "services":1}
+db.paris.find(match, project).pretty();
+
+// 12)
+match = {"category": "accommodation", "services": "blanchisserie"}
+project = {"location.address":1}
+db.paris.find(match, project).pretty();
+
+// 13)
+match = {"reviews.rating": {$gte:4}}
+project = {"category": 1}
+db.paris.find(match, project).pretty();
+
+// 14)
+match = {"reviews.source": "Facebook"}
+project = {"reviews.source": 1}
+db.paris.find(match, project).pretty();
+
+// 16)
+match = {"location.address": /rue de Rome/i}
+project = {"location.coord.coordinates": 1}
+db.paris.find(match, project).pretty();
+
+// 20)
+opMatch = {$match : {"services" : "blanchisserie", "category" : "accommodation", "contact.phone":{$exists:1}} };
+opProject = {$project : {"name":1, "contact.phone":1}};
+opSort = {$sort : {"name":1}};
+db.paris.aggregate([ opMatch, opProject, opSort ]);
+
+// 21)
+opMatch = {$match : {"services" : "chambres non-fumeurs", "category" : "accommodation"} };
+opCount = {$count : "nb_matches"};
+db.paris.aggregate([ opMatch, opCount ]);
+
+// 22)
+opGroup = {$group: {_id: "$category", count: {$sum:1}} };
+db.paris.aggregate([ opGroup ]);
+
+// 23)
+opMatch = {$match : {"category" : "accommodation"}};
+opUnwind = {$unwind : "$services"};
+opGroup = {$group : {_id:"$services", "tot":{$sum:1}} };
+db.paris.aggregate([ opMatch, opUnwind, opGroup ]);
+
+// 24)
+opMatch = {$match : {"category" : "accommodation"}};
+opUnwind = {$unwind : "$services"};
+opGroup = {$group : {_id:"$services", "tot":{$sum:1}} };
+opSort = {$sort : {"tot":-1}}
+db.paris.aggregate([ opMatch, opUnwind, opGroup, opSort ]);
+
+// 32)
+db.paris.ensureIndex( { "location.coord" : "2dsphere" } );
+
+db.paris.find({"name":{$in: ["Eiffel Tower Paris France","Pyramide du Louvre","Boulevard Saint-Michel"]}},
+{"name":1,"location.coord.coordinates":1,"_id":0});
+
+louvre = [ 2.3358714580536, 48.861018076911 ]
+saint_michel = [ 2.3421263694763, 48.849368645992 ]
+tour_eiffel = [ 2.3516704899184, 48.857770855496 ]
+
+dist=200;
+near = {$near : {$geometry : {"type" : "Point", "coordinates" : saint_michel},
+$maxDistance : dist}};
+db.paris.find({"location.coord":near, "category":"restaurant"}, {"name":1, "location.address":1, "_id":0});
+
