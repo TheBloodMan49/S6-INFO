@@ -1,7 +1,6 @@
-PPI/
-PropEtPred/
-Complexite/
 Scratchpad/
 
-
-IA/Bomberman*/
+Complexite/*
+!Complexite/tp01/
+!Complexite/annale/
+!Complexite/*.c

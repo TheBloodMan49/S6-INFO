@@ -1,0 +1,3 @@
+[submodule "IA/Bomberman"]
+	path = IA/Bomberman
+	url = git@github.com:KwikKill/Bomberman.git
